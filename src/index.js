@@ -1,19 +1,19 @@
 // @ts-check
 /** @type {import("eslint/config").defineConfig} */
-import { defineConfig } from "eslint/config";
-import js from "@eslint/js";
-import sonarjs from "eslint-plugin-sonarjs";
-import unicorn from "eslint-plugin-unicorn";
-import tseslint from "typescript-eslint";
-import deMorgan from "eslint-plugin-de-morgan";
-import { plugin as jsAssistantPlugin } from "./plugin.js";
+import { defineConfig } from "eslint/config"
+import js from "@eslint/js"
+import sonarjs from "eslint-plugin-sonarjs"
+import unicorn from "eslint-plugin-unicorn"
+import tseslint from "typescript-eslint"
+import deMorgan from "eslint-plugin-de-morgan"
+import { plugin as jsAssistantPlugin } from "./plugin.js"
 
-const jsAndTsFiles = ["**/*.{js,cjs,mjs,ts,cts,mts}"];
-const tsFiles = ["**/*.{ts,cts,mts}"];
+const jsAndTsFiles = ["**/*.{js,cjs,mjs,ts,cts,mts}"]
+const tsFiles = ["**/*.{ts,cts,mts}"]
 
 const ignores = {
   ignores: ["coverage/**", "dist/**", "node_modules/**"],
-};
+}
 
 /** @type {import("eslint").Linter.RulesRecord} */
 const sharedModernizationRules = {
@@ -50,6 +50,12 @@ const sharedModernizationRules = {
   "sonarjs/no-redundant-boolean": "warn",
   "sonarjs/no-redundant-jump": "warn",
   "sonarjs/no-small-switch": "warn",
+  "sonarjs/no-ignored-return": "warn",
+  "sonarjs/cognitive-complexity": "warn",
+  "sonarjs/no-duplicate-string": "warn",
+  "sonarjs/useless-catch": "warn",
+  "sonarjs/prefer-immediate-return": "warn",
+  "sonarjs/prefer-object-literal": "warn",
 
   "unicorn/no-negation-in-equality-check": "warn",
   "unicorn/prefer-array-flat": "warn",
@@ -76,7 +82,7 @@ const sharedModernizationRules = {
 
   "js-assistant/prefer-early-return": "warn",
   "js-assistant/replace-assignment-with-return": "warn",
-};
+}
 
 /** @type {import("eslint").Linter.RulesRecord} */
 const tsModernizationRules = {
@@ -105,14 +111,14 @@ const tsModernizationRules = {
       allowSetters: false,
     },
   ],
-};
+}
 
 /** @type {import("eslint").Linter.RulesRecord} */
 const typeAwareModernizationRules = {
   "@typescript-eslint/prefer-nullish-coalescing": "warn",
   "@typescript-eslint/prefer-optional-chain": "warn",
   "@typescript-eslint/switch-exhaustiveness-check": "warn",
-};
+}
 
 export const recommended = defineConfig(
   ignores,
@@ -132,7 +138,7 @@ export const recommended = defineConfig(
     files: tsFiles,
     rules: tsModernizationRules,
   },
-);
+)
 
 export const typeChecked = defineConfig(
   ...recommended,
@@ -146,6 +152,6 @@ export const typeChecked = defineConfig(
     },
     rules: typeAwareModernizationRules,
   },
-);
+)
 
-export default recommended;
+export default recommended
