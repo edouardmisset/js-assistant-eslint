@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>P42 JS Assistant to ESLint Rule Matrix</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f7f8fb;
+        --panel: #ffffff;
+        --text: #171923;
+        --muted: #526071;
+        --border: #d9dee8;
+        --accent: #4f46e5;
+        --badge-bg: #eef2ff;
+        --badge-text: #3730a3;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0e1117;
+          --panel: #151a23;
+          --text: #e6edf3;
+          --muted: #a6b3c3;
+          --border: #2b3442;
+          --accent: #8b9cff;
+          --badge-bg: #202a44;
+          --badge-text: #bcc7ff;
+        }
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      main {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 4vw, 48px);
+        line-height: 1.05;
+      }
+
+      p {
+        color: var(--muted);
+        margin: 0 0 24px;
+      }
+
+      .filter-section {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 24px;
+      }
+
+      .filter-title {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0 0 12px;
+      }
+
+      .filter-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .filter-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        user-select: none;
+        font-size: 14px;
+      }
+
+      .filter-checkbox {
+        cursor: pointer;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 16px 40px rgb(15 23 42 / 8%);
+      }
+
+      table {
+        border-collapse: collapse;
+        min-width: 1100px;
+        width: 100%;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--border);
+        padding: 12px 14px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: color-mix(in srgb, var(--panel), var(--accent) 7%);
+        color: var(--text);
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        position: sticky;
+        text-transform: uppercase;
+        top: 0;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      tr.hidden {
+        display: none;
+      }
+
+      .badge {
+        background: var(--badge-bg);
+        border: 1px solid color-mix(in srgb, var(--badge-bg), var(--badge-text) 22%);
+        border-radius: 999px;
+        color: var(--badge-text);
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 8px;
+        white-space: nowrap;
+      }
+
+      .no-results {
+        padding: 40px 20px;
+        text-align: center;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>P42 JS Assistant to ESLint Rule Matrix</h1>
+      <p>JavaScript and TypeScript only. Vue, React, and JSX-specific assists are excluded. Milestone 1 reuses existing ESLint ecosystem rules before custom ports.</p>
+      
+      <div class="filter-section">
+        <div class="filter-title">Filter by Milestone 1 status</div>
+        <div class="filter-options">
+          <label class="filter-label"><input type="checkbox" class="filter-checkbox" value="Custom autofix candidate" checked> Custom autofix candidate</label><label class="filter-label"><input type="checkbox" class="filter-checkbox" value="Custom suggestion" checked> Custom suggestion</label><label class="filter-label"><input type="checkbox" class="filter-checkbox" value="Defer" checked> Defer</label><label class="filter-label"><input type="checkbox" class="filter-checkbox" value="Evaluate" checked> Evaluate</label><label class="filter-label"><input type="checkbox" class="filter-checkbox" value="Not ESLint" checked> Not ESLint</label><label class="filter-label"><input type="checkbox" class="filter-checkbox" value="Partial reuse" checked> Partial reuse</label><label class="filter-label"><input type="checkbox" class="filter-checkbox" value="Reuse" checked> Reuse</label><label class="filter-label"><input type="checkbox" class="filter-checkbox" value="Type-aware reuse" checked> Type-aware reuse</label>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Assist</th>
+              <th>Categories</th>
+              <th>Existing ESLint ecosystem</th>
+              <th>Milestone 1 status</th>
+              <th>Port plan</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr data-milestone="Custom suggestion">
+            <td>Add braces to case</td>
+            <td>Syntax conversion</td>
+            <td>No direct stable equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Consider a custom suggestion rule if case scoping becomes a team convention.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Add braces to if-else and loops</td>
+            <td>Branching, Syntax conversion</td>
+            <td>ESLint core: curly</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1 as an autofix.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Add numeric separator</td>
+            <td>Syntax conversion, Modernization</td>
+            <td>eslint-plugin-unicorn: numeric-separators-style</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Collapse object property into shorthand</td>
+            <td>Syntax conversion, Modernization</td>
+            <td>ESLint core: object-shorthand</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1 as an autofix.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Convert .apply() to spread syntax</td>
+            <td>Modernization</td>
+            <td>ESLint core: prefer-spread</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Convert array.filter()[0] to array.find()</td>
+            <td>Arrays and loops</td>
+            <td>eslint-plugin-unicorn: prefer-array-find</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Convert array.indexOf() into array.includes()</td>
+            <td>Arrays and loops, Modernization</td>
+            <td>eslint-plugin-unicorn: prefer-includes</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Convert &amp;&amp; to if statement</td>
+            <td>Branching</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only first because this changes statement shape and comment placement.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Convert conditional expression to if-else</td>
+            <td>Branching</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Keep as suggestion-only; not a safe global autofix.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Convert function to arrow function</td>
+            <td>Functions, Modernization</td>
+            <td>Partial ecosystem support</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only because this, arguments, super, and constructability can change behavior.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Convert function to object method</td>
+            <td>Functions, Modernization</td>
+            <td>ESLint core: object-shorthand covers simple cases</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Covered indirectly by object-shorthand in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Convert if-else into conditional expression</td>
+            <td>Branching</td>
+            <td>eslint-plugin-unicorn: prefer-ternary</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included via unicorn/prefer-ternary.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Convert if-else to switch</td>
+            <td>Branching</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Large control-flow rewrite; never enable as default autofix.</td>
+          </tr>
+          <tr data-milestone="Defer">
+            <td>Convert loop to .forEach</td>
+            <td>Arrays and loops</td>
+            <td>Conflicting ecosystem preferences</td>
+            <td><span class="badge">Defer</span></td>
+            <td>Do not lint by default; teams disagree on forEach versus for-of.</td>
+          </tr>
+          <tr data-milestone="Defer">
+            <td>Convert loop to for...of</td>
+            <td>Arrays and loops, Modernization</td>
+            <td>Partial ecosystem support</td>
+            <td><span class="badge">Defer</span></td>
+            <td>Suggestion-only after semantic guards for break, continue, sparse arrays, and indexes.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Convert loop to for</td>
+            <td>Arrays and loops</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor refactor or codemod only.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Convert loop to .map()</td>
+            <td>Arrays and loops</td>
+            <td>No direct safe equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only for push-into-array loops with strict purity checks.</td>
+          </tr>
+          <tr data-milestone="Defer">
+            <td>Convert named function declaration to variable declaration</td>
+            <td>Functions</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Defer</span></td>
+            <td>Style-only and behavior can change around hoisting.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Convert new Array(...) to [...]</td>
+            <td>Variables</td>
+            <td>ESLint core: no-array-constructor; typescript-eslint equivalent</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Convert property access to dot notation</td>
+            <td>Syntax conversion</td>
+            <td>ESLint core: dot-notation</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Custom autofix candidate">
+            <td>Convert string comparison chain to array.includes()</td>
+            <td>Logical expressions, Arrays and loops, Strings, Modernization</td>
+            <td>No complete equivalent</td>
+            <td><span class="badge">Custom autofix candidate</span></td>
+            <td>Implement after milestone 1 for pure equality chains only.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Convert string to template literal</td>
+            <td>Strings, Syntax conversion, Modernization</td>
+            <td>ESLint core: prefer-template covers concatenation</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Covered only when it improves interpolation; plain string-to-template should not be linted.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Convert switch to if-else</td>
+            <td>Branching</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor refactor or codemod only.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Convert to ++ / --</td>
+            <td>Syntax conversion</td>
+            <td>No direct core rule</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only; operator-assignment covers a related but safer subset.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Convert to destructuring assignment</td>
+            <td>Variables, Destructuring, Modernization</td>
+            <td>ESLint core: prefer-destructuring</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1 (objects only by default to avoid array index noise).</td>
+          </tr>
+          <tr data-milestone="Type-aware reuse">
+            <td>Convert to optional chaining</td>
+            <td>Logical expressions, Modernization</td>
+            <td>typescript-eslint: prefer-optional-chain</td>
+            <td><span class="badge">Type-aware reuse</span></td>
+            <td>Included in exported typeChecked config.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Convert Type[] to Array&lt;Type&gt;</td>
+            <td>TypeScript</td>
+            <td>typescript-eslint: array-type</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1 with generic style to match the P42 assist.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Convert TypeScript private to #-private</td>
+            <td>Classes, TypeScript</td>
+            <td>No safe generic equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Avoid as lint autofix due runtime target and emit differences.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Convert var to let or const</td>
+            <td>Variables, Modernization</td>
+            <td>ESLint core: no-var and prefer-const</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Extract destructured expression into separate variable declaration</td>
+            <td>Variables, Destructuring, Moving semantic blocks</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor refactor; depends on cursor and naming intent.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Extract selected text into variable</td>
+            <td>Core, Strings</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Cursor and selection driven; keep as editor refactor.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Extract variable</td>
+            <td>Core, Variables</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Cursor and naming driven; not a lint diagnostic.</td>
+          </tr>
+          <tr data-milestone="Custom autofix candidate">
+            <td>Flatten array rest/spread property</td>
+            <td>Variables, Code cleanups</td>
+            <td>No complete equivalent</td>
+            <td><span class="badge">Custom autofix candidate</span></td>
+            <td>Implement for nested literals only when comments and evaluation order are preserved.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Flip operator</td>
+            <td>Logical expressions</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor convenience action, not a code-quality diagnostic.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Inline into template</td>
+            <td>Strings</td>
+            <td>ESLint core: prefer-template and no-useless-concat cover related cases</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Milestone 1 handles common concat-to-template cases.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Inline variable</td>
+            <td>Core</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Cursor-driven refactor with scope and readability tradeoffs.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Inline variable occurrence</td>
+            <td>Branching</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Cursor-driven refactor.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Introduce early return / continue</td>
+            <td>Branching</td>
+            <td>js-assistant custom rule</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Implemented as js-assistant/prefer-early-return.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Invert condition</td>
+            <td>Logical expressions</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor refactor; not a stable lint preference.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Merge into preceding destructuring assignment</td>
+            <td>Variables, Destructuring</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only for adjacent declarations with same source object.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Merge if-statement into preceding if-statement</td>
+            <td>Branching</td>
+            <td>eslint-plugin-sonarjs detects duplicated logic</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Milestone 1 includes related SonarJS diagnostics; exact merge can be custom suggestion later.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Merge nested if inside else into else-if</td>
+            <td>Branching</td>
+            <td>ESLint core: no-lonely-if</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1 as an autofix.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Merge nested if-statements</td>
+            <td>Branching</td>
+            <td>eslint-plugin-sonarjs: no-collapsible-if</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1 as a diagnostic; autofix support depends on plugin behavior.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Merge string concatenation</td>
+            <td>Strings, Modernization</td>
+            <td>ESLint core: prefer-template and no-useless-concat</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1 for common cases.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Merge variable declaration and initialization</td>
+            <td>Variables, Syntax conversion</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only; must preserve TDZ, comments, and control flow.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Move array element</td>
+            <td>Arrays and loops, Moving semantic blocks</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor action only.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Move class member</td>
+            <td>Moving semantic blocks</td>
+            <td>typescript-eslint: member-ordering for diagnostics</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Use member-ordering only if the team wants fixed member order; movement remains editor action.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Move constant to top-level scope</td>
+            <td>Variables, Moving semantic blocks</td>
+            <td>No direct safe equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only with strict closure and module side-effect guards.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Move default value into parameter</td>
+            <td>Functions, Variables, Modernization</td>
+            <td>No complete equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only; must avoid arguments usage and call arity changes.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Move destructuring array element</td>
+            <td>Destructuring, Moving semantic blocks</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor action only.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Move destructuring object property</td>
+            <td>Destructuring, Moving semantic blocks</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor action only.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Move duplicated first statement out of if-else</td>
+            <td>Branching, Moving semantic blocks</td>
+            <td>eslint-plugin-sonarjs duplicated branch diagnostics</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Milestone 1 flags duplicated branches; extraction can be custom suggestion later.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Move duplicated last statement out of if-else</td>
+            <td>Branching, Moving semantic blocks</td>
+            <td>eslint-plugin-sonarjs duplicated branch diagnostics</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Milestone 1 flags duplicated branches; extraction can be custom suggestion later.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Move field initialization into constructor</td>
+            <td>Classes, Variables, Moving semantic blocks</td>
+            <td>No safe generic equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Avoid as lint autofix because initialization order and decorators matter.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Move if-else-if branches</td>
+            <td>Branching, Moving semantic blocks</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor action only.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Move initialization into field declaration</td>
+            <td>Classes, Variables, Moving semantic blocks</td>
+            <td>No safe generic equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Avoid as lint autofix because initialization order and decorators matter.</td>
+          </tr>
+          <tr data-milestone="Defer">
+            <td>Move interface member</td>
+            <td>TypeScript, Moving semantic blocks</td>
+            <td>typescript-eslint: member-ordering for some class-like structures</td>
+            <td><span class="badge">Defer</span></td>
+            <td>Use only if the team adopts an ordering policy; otherwise editor action.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Move nested if</td>
+            <td>Branching, Moving semantic blocks</td>
+            <td>eslint-plugin-sonarjs related diagnostics</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Milestone 1 can flag collapsible or duplicated condition shapes; movement remains suggestion/editor action.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Move object property</td>
+            <td>Arrays and loops, Moving semantic blocks</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor action only.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Move statement</td>
+            <td>Moving semantic blocks</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor action only.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Move switch case clause</td>
+            <td>Branching, Moving semantic blocks</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor action only.</td>
+          </tr>
+          <tr data-milestone="Defer">
+            <td>Move type member</td>
+            <td>TypeScript, Moving semantic blocks</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Defer</span></td>
+            <td>Only lint if the team wants a strict type member ordering rule.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Move variable declaration</td>
+            <td>Variables, Moving semantic blocks</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor action only.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Push down negation</td>
+            <td>Logical expressions</td>
+            <td>eslint-plugin-de-morgan</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included via de-morgan/no-negated-conjunction and no-negated-disjunction.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Push operator into assignment</td>
+            <td>Syntax conversion</td>
+            <td>ESLint core: operator-assignment</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Push parameter into IIFE/IIAF</td>
+            <td>Functions, Variables, Destructuring</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only; scope and evaluation order need careful checks.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Push variable declaration into initial value</td>
+            <td>Variables, Destructuring</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only for adjacent simple declarations.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Remove console.log</td>
+            <td>Code cleanups</td>
+            <td>ESLint core: no-console</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included as warning. Removal fixer should be custom and opt-in only.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Remove double negation</td>
+            <td>Logical expressions, Code cleanups</td>
+            <td>ESLint core: no-extra-boolean-cast covers related cases</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Milestone 1 covers boolean-context cases; standalone !! removal needs custom rule.</td>
+          </tr>
+          <tr data-milestone="Custom autofix candidate">
+            <td>Remove empty else block</td>
+            <td>Branching, Code cleanups</td>
+            <td>No complete equivalent</td>
+            <td><span class="badge">Custom autofix candidate</span></td>
+            <td>Implement after milestone 1 with comment-preservation tests.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Remove empty if block</td>
+            <td>Branching, Code cleanups</td>
+            <td>ESLint core and SonarJS catch some empty blocks</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Existing rules flag some cases; branch inversion/removal needs custom suggestion.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Remove IIFE/IIAF</td>
+            <td>Functions, Code cleanups</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only; must preserve scope, strict mode, async, and ASI behavior.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Remove redundant else if</td>
+            <td>Branching, Code cleanups</td>
+            <td>eslint-plugin-sonarjs: no-identical-conditions</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Milestone 1 flags duplicated conditions; removal can be custom suggestion later.</td>
+          </tr>
+          <tr data-milestone="Custom autofix candidate">
+            <td>Remove trailing array destructuring holes</td>
+            <td>Variables, Destructuring, Code cleanups</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Custom autofix candidate</span></td>
+            <td>High-confidence custom autofix candidate.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Remove unnecessary conditional expression</td>
+            <td>Branching, Code cleanups</td>
+            <td>ESLint core: no-unneeded-ternary; SonarJS gratuitous expressions</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1 for common cases.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Remove unnecessary else</td>
+            <td>Branching, Code cleanups</td>
+            <td>ESLint core: no-else-return</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Remove unnecessary expression statement</td>
+            <td>Code cleanups</td>
+            <td>ESLint core: no-unused-expressions</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1 as a diagnostic.</td>
+          </tr>
+          <tr data-milestone="Custom autofix candidate">
+            <td>Remove unnecessary template literal</td>
+            <td>Strings, Code cleanups</td>
+            <td>No direct complete equivalent</td>
+            <td><span class="badge">Custom autofix candidate</span></td>
+            <td>Autofix simple no-expression templates and single-expression templates after escaping tests.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Remove unused variable</td>
+            <td>Variables, Code cleanups</td>
+            <td>typescript-eslint: no-unused-vars; ESLint core equivalent</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1 as diagnostic. Destructive removal should be opt-in.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Replace assignment with return</td>
+            <td>Core, Variables</td>
+            <td>js-assistant custom rule</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Implemented as js-assistant/replace-assignment-with-return.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Replace with existing variable</td>
+            <td>Variables</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Intent-driven editor refactor.</td>
+          </tr>
+          <tr data-milestone="Custom autofix candidate">
+            <td>Replace void 0 with undefined</td>
+            <td>Modernization, Code cleanups</td>
+            <td>No direct core equivalent</td>
+            <td><span class="badge">Custom autofix candidate</span></td>
+            <td>Autofix only when undefined is not shadowed and config allows it.</td>
+          </tr>
+          <tr data-milestone="Evaluate">
+            <td>Replace _.each and _.forEach with array.forEach</td>
+            <td>Lodash modernizations</td>
+            <td>Possible lodash-specific plugins</td>
+            <td><span class="badge">Evaluate</span></td>
+            <td>Evaluate plugin coverage before writing custom rules.</td>
+          </tr>
+          <tr data-milestone="Evaluate">
+            <td>Replace _.every with array.every</td>
+            <td>Lodash modernizations</td>
+            <td>Possible lodash-specific plugins</td>
+            <td><span class="badge">Evaluate</span></td>
+            <td>Evaluate plugin coverage before writing custom rules.</td>
+          </tr>
+          <tr data-milestone="Evaluate">
+            <td>Replace _.filter with array.filter</td>
+            <td>Lodash modernizations</td>
+            <td>Possible lodash-specific plugins</td>
+            <td><span class="badge">Evaluate</span></td>
+            <td>Evaluate plugin coverage before writing custom rules.</td>
+          </tr>
+          <tr data-milestone="Evaluate">
+            <td>Replace _.map with array.map</td>
+            <td>Lodash modernizations</td>
+            <td>Possible lodash-specific plugins</td>
+            <td><span class="badge">Evaluate</span></td>
+            <td>Evaluate plugin coverage before writing custom rules.</td>
+          </tr>
+          <tr data-milestone="Evaluate">
+            <td>Replace _.noop with arrow function</td>
+            <td>Lodash modernizations</td>
+            <td>Possible lodash-specific plugins</td>
+            <td><span class="badge">Evaluate</span></td>
+            <td>Evaluate plugin coverage before writing custom rules.</td>
+          </tr>
+          <tr data-milestone="Evaluate">
+            <td>Replace _.some with array.some</td>
+            <td>Lodash modernizations</td>
+            <td>Possible lodash-specific plugins</td>
+            <td><span class="badge">Evaluate</span></td>
+            <td>Evaluate plugin coverage before writing custom rules.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Separate repeated condition into nested if-else</td>
+            <td>Branching</td>
+            <td>eslint-plugin-sonarjs may flag duplicated conditions</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Use diagnostics first; structural rewrite can be suggestion-only later.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Simplify binary expression</td>
+            <td>Logical expressions, Code cleanups</td>
+            <td>eslint-plugin-sonarjs: no-identical-expressions, no-redundant-boolean; eslint-plugin-unicorn: no-negation-in-equality-check</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Milestone 1 catches common cases; custom autofix only for narrow algebraic identities.</td>
+          </tr>
+          <tr data-milestone="Partial reuse">
+            <td>Simplify switch statement</td>
+            <td>Branching, Code cleanups</td>
+            <td>eslint-plugin-sonarjs: no-small-switch</td>
+            <td><span class="badge">Partial reuse</span></td>
+            <td>Milestone 1 flags some small switches; rewrite should be suggestion-only.</td>
+          </tr>
+          <tr data-milestone="Custom suggestion">
+            <td>Split if statement</td>
+            <td>Branching</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Custom suggestion</span></td>
+            <td>Suggestion-only; changes control-flow shape.</td>
+          </tr>
+          <tr data-milestone="Defer">
+            <td>Split variable declaration sequence</td>
+            <td>Variables</td>
+            <td>No direct core equivalent</td>
+            <td><span class="badge">Defer</span></td>
+            <td>Only lint if the team wants one declaration per statement.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Split variable declaration and initialization</td>
+            <td>Variables</td>
+            <td>No direct equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor refactor; can reduce locality.</td>
+          </tr>
+          <tr data-milestone="Custom autofix candidate">
+            <td>Use == null comparison</td>
+            <td>Logical expressions, Modernization</td>
+            <td>ESLint core eqeqeq can allow null but does not enforce it</td>
+            <td><span class="badge">Custom autofix candidate</span></td>
+            <td>Add custom opt-in rule only for nullish checks and document eqeqeq null exception.</td>
+          </tr>
+          <tr data-milestone="Type-aware reuse">
+            <td>Use nullish coalescing in default expression</td>
+            <td>Variables, Modernization</td>
+            <td>typescript-eslint: prefer-nullish-coalescing</td>
+            <td><span class="badge">Type-aware reuse</span></td>
+            <td>Included in exported typeChecked config.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Use string.endsWith()</td>
+            <td>Strings, Modernization</td>
+            <td>eslint-plugin-unicorn: prefer-string-starts-ends-with</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Reuse">
+            <td>Use string.startsWith()</td>
+            <td>Strings, Modernization</td>
+            <td>eslint-plugin-unicorn: prefer-string-starts-ends-with</td>
+            <td><span class="badge">Reuse</span></td>
+            <td>Included in milestone 1.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Insert console.log for variable</td>
+            <td>Other actions</td>
+            <td>No equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Authoring action only.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Insert else statement</td>
+            <td>Other actions</td>
+            <td>No equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Authoring action only.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Select expression occurrences</td>
+            <td>Other actions</td>
+            <td>No equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Editor UX only.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Surround with if statement</td>
+            <td>Other actions</td>
+            <td>No equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Authoring action only.</td>
+          </tr>
+          <tr data-milestone="Not ESLint">
+            <td>Surround with try-catch</td>
+            <td>Other actions</td>
+            <td>No equivalent</td>
+            <td><span class="badge">Not ESLint</span></td>
+            <td>Authoring action only.</td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="no-results" style="display: none;"></div>
+      </div>
+    </main>
+
+    <script>
+      const checkboxes = document.querySelectorAll(".filter-checkbox");
+      const rows = document.querySelectorAll("tbody tr");
+      const noResults = document.querySelector(".no-results");
+
+      function updateFilter() {
+        const selected = new Set(
+          Array.from(checkboxes)
+            .filter((cb) => cb.checked)
+            .map((cb) => cb.value)
+        );
+
+        let visibleCount = 0;
+
+        rows.forEach((row) => {
+          const milestone = row.getAttribute("data-milestone");
+          const isVisible = selected.has(milestone);
+          row.classList.toggle("hidden", !isVisible);
+          if (isVisible) visibleCount += 1;
+        });
+
+        if (visibleCount === 0) {
+          noResults.style.display = "block";
+          noResults.textContent = "No results match the selected filters.";
+        } else {
+          noResults.style.display = "none";
+        }
+      }
+
+      checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", updateFilter);
+      });
+    </script>
+  </body>
+</html>
